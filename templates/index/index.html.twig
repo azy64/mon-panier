@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!{% endblock %}
+
+{% block body %}
+<style>
+.active{
+    background:#0D6EFD;
+}
+.desactive{
+     background:#6C757D;
+}
+.panin{
+    font-size:11px;
+    color:white;
+    text-decoration:none;
+    border:1px solid transparent;
+    border-radius:5px;
+    padding:3px;
+    margin:4px;
+    line-height:9px;
+    font-weight:bold;
+}
+.variant{
+    border:1px solid gray;
+    padding:8px;
+    display:flex;
+    flex:1;
+    flex-direction:row;
+    margin:3px;
+}
+.variant .image{
+    flex:1;
+
+}
+.variant .content{
+    flex:5;
+    padding-left:20px
+}
+.badge{
+    background:red;
+    color:white;
+    border-radius:15px;
+    font-size:12px ! important;
+    padding:4px;
+    position:relative;
+    left:-5px;
+    top:-20px;
+    border:1px solid transparent;
+}
+    
+</style>
+<h1>LIST OF PRODUCTS 
+    <a title="clicker pour acceder à votre panier" style="border:1px solid #6C757D;padding:3px;border-radius:5px;background:#DC3545" href="{{path('paniers_index',{id_client:app.session.get('idClient')})}}"><img width="30px" alt="panier" src="{{asset('img/basket.png')}}"></a><i class="badge">{{nombre}}</i> 
+    {% if display_home is defined %}
+         <a href="{{path('index',{id_client:app.session.get('idClient')})}}"><img width="30px" src="{{asset('img/home.png')}}" alt="home page"></a>
+    {% endif %}
+    
+   
+</h1>
+<div>
+    <h3> <!--{{ variants.getTotalItemCount }}--> {{ knp_pagination_render(variants) }}</h3>
+    <form action="{{path('filtre')}}" method="post">
+        <label>Categories
+            <select name="categorie">
+                {% for item in categories %}
+                    <option value="{{item.id}}">{{item.libele}}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Type de produit
+            <select name="typeProduit">
+                {% for item in types %}
+                    <option value="{{item.id}}">{{item.libele}}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Genre
+            <select name="genre">
+                {% for item in genres %}
+                    <option value="{{item.id}}">{{item.libele}}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Couleur
+            <select name="color">
+                {% for item in colors %}
+                    <option value="{{item.id}}">{{item.libele}}</option>
+                {% endfor %}
+            </select>
+        </label>
+         <label>Taille
+            <select name="taille">
+                {% for item in size %}
+                    <option value="{{item.id}}">{{item.libele}}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <input type="submit" value="filtrer"/>
+    </form>
+    <hr>
+    <div class="container">
+        {% for item in variants %}
+            <div class="variant">
+                <div class="image">
+                    <img src="upload/{{item.photo}}" width="100%" alt="photo"/>
+                </div>
+                <div class="content">
+                    <h2> {{item.produit.nom}}</h2>
+                    <h2>{{item.produit.marque}}-- {{item.prix}} €</h3>
+                    <label> Available Size
+                    <select name="taille">
+                    {% for t in item.taille %}
+                        <option value="{{t.id}}">{{t.libele}}</option>
+                    {% endfor %}
+                    </select>
+                    </label>
+                    <h4>{{item.produit.reference}}</h4>
+                    <label for="num">Available Color
+                        <select id="colors">
+                        {% for c in item.couleur %}
+                            <option value="{{c.id}}">{{c.libele}}</option>
+                        {% endfor %}
+                        </select>
+                    </label><br>
+                    <label for="num">Quantité
+                        <select id="quantity">
+                        {% for item in range(1,100) %}
+                            <option>{{item}}</option>
+                        {% endfor %}
+                        </select>
+                    </label>
+                    
+                     <a id="put"class="panin active" name="{{item.id}}" href="">mettre dans le panier</a>
+                </div>
+            </div>
+
+               
+        {% endfor %}
+    </div>
+    <h3>{{ knp_pagination_render(variants) }}</h3>
+</div>
+
+<script type="text/javascript">
+    let p= document.querySelectorAll(".panin");
+    let q= document.querySelector("#quantity");
+    let v= q.value;
+    //console.log("voici la valeur",p);
+   for( var i=0;i<p.length;i++){
+       p[i].addEventListener("click",function(e){
+          // e.preventDefault();
+           let parent=e.target.parentNode;
+           let quantity=parent.childNodes[12].childNodes[1];
+           let size=parent.childNodes[5].childNodes[1];
+           let color=parent.childNodes[9].childNodes[1];
+           let valueColor=color.options[color.selectedIndex].value;
+           let valueQuantity=quantity.options[quantity.selectedIndex].value
+           let valueSize=size.options[size.selectedIndex].value;
+           //console.log(size);
+
+            //let valueSelect=quantity.options[quantity.selectedIndex].value;
+           e.target.href="/panier/"+valueQuantity+"/"+valueSize+"/"+valueColor+"/"+e.target.name;
+       });
+   }
+   
+
+</script>
+{% endblock %}

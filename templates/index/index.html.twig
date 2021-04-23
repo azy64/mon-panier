@@ -118,7 +118,7 @@
                     <h4>{{item.produit.reference}}</h4>
                     <label for="num">Available Color
                         <select id="colors">
-                        {% for c in item.couleur %}
+                        {% for c in colors %}
                             <option value="{{c.id}}">{{c.libele}}</option>
                         {% endfor %}
                         </select>

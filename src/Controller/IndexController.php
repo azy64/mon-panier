@@ -52,7 +52,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/panier/{qu}/{taille}/{couleur}/{id}", name="put_in_basket")
      */
-    public function putInBasket(Variants $p,TaillesRepository $tr,CouleursRepository $cr, $qu,$taille,$couleur){
+    public function putInBasket(REquest $request,Variants $p,TaillesRepository $tr,CouleursRepository $cr, $qu,$taille,$couleur){
 
         $pan=new Paniers();
         $co=$cr->findOneBy(['id'=>$couleur]);
@@ -61,7 +61,7 @@ class IndexController extends AbstractController
         $pan->setTaille($tt);
         $pan->setVariant($p);
         $pan->setQuantity((int)$qu);
-        $pan->setIdClient($this->s->get("idClient"));
+        $pan->setIdClient($request->getSession()->get("idClient"));
         $d=new \DateTime();
         $d->add(new \DateInterval("P7D"));
         $j=(int)$d->format("w");
